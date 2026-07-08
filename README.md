@@ -4,7 +4,9 @@ A **very basic** weather app built with plain HTML + Tailwind + vanilla JS.
 
 ## Live Demo
 
-**https://weatherly-ten-alpha.vercel.app**
+**https://weatherly-ten-alpha.vercel.app**  ← this one works publicly
+
+(The other Vercel URLs for the project may redirect to a login page right now because "Vercel Authentication" is enabled in project security settings.)
 
 ## Features
 - Search weather by city name
@@ -21,8 +23,8 @@ Open `index.html` in any browser.
 ## Deployed on Vercel + GitHub
 
 - Vercel project: **weatherly**
-- GitHub repo connected → pushes to `main` auto-deploy
-- Created/pushed using GitHub + Vercel MCP tools
+- GitHub repo connected → pushes to `main` auto-deploy and update the alias
+- Clean static deploy (no vercel.json needed)
 
 ### Source
 https://github.com/mariustoft/weather-app
