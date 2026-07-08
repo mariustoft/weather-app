@@ -20,10 +20,6 @@
       font-weight: 600;
       letter-spacing: -0.05em;
     }
-    .glass {
-      background: rgba(255,255,255,0.8);
-      backdrop-filter: blur(12px);
-    }
   </style>
 </head>
 <body class="bg-slate-50 min-h-screen">
@@ -84,51 +80,7 @@
     </button>
 
     <!-- Results / Loading / Empty -->
-    <div id="weather-container" class="hidden">
-      <div class="weather-card border border-slate-100 rounded-3xl p-6">
-        <!-- Location header -->
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
-            <div id="city-details" class="text-sm text-slate-500"></div>
-          </div>
-          <div id="weather-icon" class="text-5xl"></div>
-        </div>
-
-        <!-- Temperature -->
-        <div class="flex items-baseline gap-x-1 mb-6">
-          <span id="temperature" class="temp text-slate-900"></span>
-          <span class="text-3xl text-slate-400">°C</span>
-        </div>
-
-        <!-- Condition -->
-        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
-
-        <!-- Details grid -->
-        <div class="grid grid-cols-3 gap-3">
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
-            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
-          </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
-            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
-          </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">WIND</div>
-            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
-          </div>
-        </div>
-
-        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
-          <div id="updated-time"></div>
-          <div class="flex items-center gap-1">
-            <i class="fa-solid fa-sync fa-xs"></i>
-            <span>Live data</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <div id="weather-container" class="hidden"></div>
 
     <!-- Empty state -->
     <div id="empty-state" class="text-center py-8 px-4">
@@ -154,12 +106,10 @@
   </footer>
 
 <script>
-  // Tailwind script
   function initTailwind() {
     document.documentElement.style.setProperty('--accent', '#2563eb');
   }
 
-  // Simple weather code to description + icon
   function getWeatherInfo(code) {
     const map = {
       0: { desc: 'Clear sky', icon: '☀️' },
@@ -246,7 +196,6 @@
     document.getElementById('weather-container').classList.add('hidden');
     document.getElementById('empty-state').classList.add('hidden');
     document.getElementById('error-state').classList.add('hidden');
-    // reset container html if needed
     document.getElementById('weather-container').innerHTML = `
       <div class="weather-card border border-slate-100 rounded-3xl p-6">
         <div class="flex items-center justify-between mb-4">
@@ -302,7 +251,6 @@
     showLoading();
 
     try {
-      // Geocode
       const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
       const geoData = await geoRes.json();
 
@@ -356,7 +304,6 @@
 
       setResultSkeleton();
 
-      // Populate UI
       document.getElementById('city-name').textContent = cityName;
       const detailsEl = document.getElementById('city-details');
       detailsEl.textContent = region && country ? `${region}, ${country}` : (region || country || `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`);
@@ -369,11 +316,9 @@
       document.getElementById('humidity').textContent = current.relative_humidity_2m + '%';
       document.getElementById('wind').textContent = Math.round(current.wind_speed_10m) + ' km/h';
 
-      // time
       const updated = new Date(current.time);
       document.getElementById('updated-time').textContent = 'Updated ' + updated.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
-      // show
       document.getElementById('empty-state').classList.add('hidden');
       document.getElementById('error-state').classList.add('hidden');
       document.getElementById('weather-container').classList.remove('hidden');
@@ -388,13 +333,18 @@
     getWeatherByCity();
   }
 
-  // Init
   function init() {
     initTailwind();
-    // Optional: preload a default city on first visit (comment out if not wanted)
-    // setTimeout(() => { document.getElementById('city-input').value = 'Copenhagen'; getWeatherByCity(); }, 600);
 
-    // Show empty state initially
+    // Auto-demo: load Copenhagen immediately so the live site visibly works
+    setTimeout(() => {
+      const input = document.getElementById('city-input');
+      if (input && !input.value) {
+        input.value = 'Copenhagen';
+        getWeatherByCity();
+      }
+    }, 400);
+
     document.getElementById('empty-state').classList.remove('hidden');
   }
 
