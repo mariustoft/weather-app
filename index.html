@@ -190,6 +190,46 @@
     return map[code] || { desc: 'Unknown', icon: '🌡️' };
   }
 
+  function setResultSkeleton() {
+    document.getElementById('weather-container').innerHTML = `
+      <div class="weather-card border border-slate-100 rounded-3xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
+            <div id="city-details" class="text-sm text-slate-500"></div>
+          </div>
+          <div id="weather-icon" class="text-5xl"></div>
+        </div>
+        <div class="flex items-baseline gap-x-1 mb-6">
+          <span id="temperature" class="temp text-slate-900"></span>
+          <span class="text-3xl text-slate-400">°C</span>
+        </div>
+        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
+            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
+            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">WIND</div>
+            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
+          <div id="updated-time"></div>
+          <div class="flex items-center gap-1">
+            <i class="fa-solid fa-sync fa-xs"></i>
+            <span>Live data</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   function showLoading() {
     hideStates();
     const container = document.getElementById('weather-container');
@@ -275,7 +315,8 @@
 
       await fetchAndDisplayWeather(latitude, longitude, name, admin1, country);
     } catch (err) {
-      showError(err.message || 'Failed to fetch weather.');
+      console.error('Geocode error:', err);
+      showError(err.message || 'Failed to fetch weather. Check connection.');
     }
   }
 
@@ -292,7 +333,8 @@
       try {
         await fetchAndDisplayWeather(latitude, longitude, 'Current Location', '', '');
       } catch (err) {
-        showError('Could not fetch weather for your location.');
+        console.error('Location weather error:', err);
+        showError('Could not fetch weather for your location. ' + (err.message || ''));
       }
     }, (error) => {
       let msg = 'Unable to get your location.';
@@ -311,6 +353,8 @@
 
       const current = data.current;
       const info = getWeatherInfo(current.weather_code);
+
+      setResultSkeleton();
 
       // Populate UI
       document.getElementById('city-name').textContent = cityName;
@@ -334,7 +378,8 @@
       document.getElementById('error-state').classList.add('hidden');
       document.getElementById('weather-container').classList.remove('hidden');
     } catch (err) {
-      showError('Failed to load weather data. Please try again.');
+      console.error('Weather data error:', err);
+      showError('Failed to load weather data. ' + (err.message || 'Check your connection or try again.'));
     }
   }
 
