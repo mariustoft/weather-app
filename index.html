@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weatherly • Basic Weather</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    body { font-family: 'Inter', system_ui, sans-serif; }
+    .title-font { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+    .weather-card {
+      background: linear-gradient(145deg, #f8fafc, #ffffff);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+    }
+    .temp {
+      font-size: 4.5rem;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: -0.05em;
+    }
+    .glass {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+  <div class="max-w-lg mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center gap-x-3">
+        <div class="w-11 h-11 bg-blue-600 rounded-2xl flex items-center justify-center text-white">
+          <i class="fa-solid fa-cloud-sun text-3xl"></i>
+        </div>
+        <div>
+          <h1 class="title-font text-3xl font-semibold tracking-tighter text-slate-900">Weatherly</h1>
+          <p class="text-xs text-slate-500 -mt-1">Basic Edition</p>
+        </div>
+      </div>
+      <div class="text-xs px-3 py-1 bg-white rounded-full border text-slate-500 flex items-center gap-x-1">
+        <i class="fa-solid fa-globe fa-xs"></i>
+        <span>Open-Meteo</span>
+      </div>
+    </div>
+
+    <!-- Search -->
+    <div class="mb-6">
+      <div class="flex gap-2">
+        <div class="flex-1 relative">
+          <input 
+            id="city-input" 
+            type="text" 
+            placeholder="Enter city name (e.g. London, Paris)"
+            class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none text-slate-800 placeholder:text-slate-400"
+            onkeypress="if (event.key === 'Enter') getWeatherByCity()"
+          >
+          <i class="fa-solid fa-search absolute right-4 top-4 text-slate-400"></i>
+        </div>
+        <button 
+          onclick="getWeatherByCity()"
+          class="px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-colors text-white rounded-2xl font-medium flex items-center gap-x-2 text-sm">
+          <i class="fa-solid fa-search"></i>
+          <span class="hidden sm:inline">Search</span>
+        </button>
+      </div>
+      
+      <!-- Quick cities -->
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button onclick="quickSearch('Copenhagen')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">Copenhagen</button>
+        <button onclick="quickSearch('London')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">London</button>
+        <button onclick="quickSearch('New York')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">New York</button>
+        <button onclick="quickSearch('Tokyo')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">Tokyo</button>
+      </div>
+    </div>
+
+    <!-- Location button -->
+    <button 
+      onclick="getWeatherByLocation()"
+      class="w-full mb-6 flex items-center justify-center gap-x-2 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 active:bg-blue-200 rounded-2xl transition-colors">
+      <i class="fa-solid fa-location-arrow"></i>
+      <span>Use my current location</span>
+    </button>
+
+    <!-- Results / Loading / Empty -->
+    <div id="weather-container" class="hidden">
+      <div class="weather-card border border-slate-100 rounded-3xl p-6">
+        <!-- Location header -->
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
+            <div id="city-details" class="text-sm text-slate-500"></div>
+          </div>
+          <div id="weather-icon" class="text-5xl"></div>
+        </div>
+
+        <!-- Temperature -->
+        <div class="flex items-baseline gap-x-1 mb-6">
+          <span id="temperature" class="temp text-slate-900"></span>
+          <span class="text-3xl text-slate-400">°C</span>
+        </div>
+
+        <!-- Condition -->
+        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
+
+        <!-- Details grid -->
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
+            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
+            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">WIND</div>
+            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+        </div>
+
+        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
+          <div id="updated-time"></div>
+          <div class="flex items-center gap-1">
+            <i class="fa-solid fa-sync fa-xs"></i>
+            <span>Live data</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="empty-state" class="text-center py-8 px-4">
+      <div class="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
+        <i class="fa-solid fa-cloud text-3xl text-slate-300"></i>
+      </div>
+      <p class="text-slate-500 text-sm">Enter a city or use your location<br>to see the current weather.</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error-state" class="hidden bg-red-50 border border-red-100 text-red-600 rounded-2xl p-4 text-sm">
+      <div class="flex gap-2">
+        <i class="fa-solid fa-exclamation-circle mt-0.5"></i>
+        <div>
+          <span id="error-message"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center py-6 text-xs text-slate-400">
+    Very basic weather app • Data from <a href="https://open-meteo.com" target="_blank" class="underline hover:text-slate-500">Open-Meteo</a> • Deployed on Vercel
+  </footer>
+
+<script>
+  // Tailwind script
+  function initTailwind() {
+    document.documentElement.style.setProperty('--accent', '#2563eb');
+  }
+
+  // Simple weather code to description + icon
+  function getWeatherInfo(code) {
+    const map = {
+      0: { desc: 'Clear sky', icon: '☀️' },
+      1: { desc: 'Mainly clear', icon: '🌤️' },
+      2: { desc: 'Partly cloudy', icon: '⛅' },
+      3: { desc: 'Overcast', icon: '☁️' },
+      45: { desc: 'Fog', icon: '🌫️' },
+      48: { desc: 'Depositing rime fog', icon: '🌫️' },
+      51: { desc: 'Light drizzle', icon: '🌦️' },
+      53: { desc: 'Moderate drizzle', icon: '🌦️' },
+      55: { desc: 'Dense drizzle', icon: '🌧️' },
+      61: { desc: 'Slight rain', icon: '🌧️' },
+      63: { desc: 'Moderate rain', icon: '🌧️' },
+      65: { desc: 'Heavy rain', icon: '⛈️' },
+      71: { desc: 'Slight snow fall', icon: '❄️' },
+      73: { desc: 'Moderate snow fall', icon: '❄️' },
+      75: { desc: 'Heavy snow fall', icon: '❄️' },
+      77: { desc: 'Snow grains', icon: '❄️' },
+      80: { desc: 'Slight rain showers', icon: '🌦️' },
+      81: { desc: 'Moderate rain showers', icon: '🌧️' },
+      82: { desc: 'Violent rain showers', icon: '⛈️' },
+      85: { desc: 'Slight snow showers', icon: '🌨️' },
+      86: { desc: 'Heavy snow showers', icon: '❄️' },
+      95: { desc: 'Thunderstorm', icon: '⛈️' },
+      96: { desc: 'Thunderstorm with slight hail', icon: '⛈️' },
+      99: { desc: 'Thunderstorm with heavy hail', icon: '⛈️' }
+    };
+    return map[code] || { desc: 'Unknown', icon: '🌡️' };
+  }
+
+  function showLoading() {
+    hideStates();
+    const container = document.getElementById('weather-container');
+    container.innerHTML = `
+      <div class="weather-card border border-slate-100 rounded-3xl p-6 flex flex-col items-center justify-center h-[260px]">
+        <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-500"></i>
+        <p class="mt-3 text-sm text-slate-500">Fetching weather...</p>
+      </div>
+    `;
+    container.classList.remove('hidden');
+  }
+
+  function hideStates() {
+    document.getElementById('weather-container').classList.add('hidden');
+    document.getElementById('empty-state').classList.add('hidden');
+    document.getElementById('error-state').classList.add('hidden');
+    // reset container html if needed
+    document.getElementById('weather-container').innerHTML = `
+      <div class="weather-card border border-slate-100 rounded-3xl p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
+            <div id="city-details" class="text-sm text-slate-500"></div>
+          </div>
+          <div id="weather-icon" class="text-5xl"></div>
+        </div>
+        <div class="flex items-baseline gap-x-1 mb-6">
+          <span id="temperature" class="temp text-slate-900"></span>
+          <span class="text-3xl text-slate-400">°C</span>
+        </div>
+        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
+            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
+            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+          <div class="bg-slate-50 rounded-2xl p-3 text-center">
+            <div class="text-xs text-slate-500 mb-1">WIND</div>
+            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
+          </div>
+        </div>
+        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
+          <div id="updated-time"></div>
+          <div class="flex items-center gap-1">
+            <i class="fa-solid fa-sync fa-xs"></i>
+            <span>Live data</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function showError(msg) {
+    hideStates();
+    document.getElementById('error-state').classList.remove('hidden');
+    document.getElementById('error-message').textContent = msg;
+  }
+
+  async function getWeatherByCity() {
+    const input = document.getElementById('city-input');
+    const city = input.value.trim();
+    if (!city) {
+      showError('Please enter a city name');
+      return;
+    }
+    showLoading();
+
+    try {
+      // Geocode
+      const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=en&format=json`);
+      const geoData = await geoRes.json();
+
+      if (!geoData.results || geoData.results.length === 0) {
+        throw new Error('City not found. Try a different name.');
+      }
+
+      const place = geoData.results[0];
+      const { latitude, longitude, name, admin1, country } = place;
+
+      await fetchAndDisplayWeather(latitude, longitude, name, admin1, country);
+    } catch (err) {
+      showError(err.message || 'Failed to fetch weather.');
+    }
+  }
+
+  async function getWeatherByLocation() {
+    if (!navigator.geolocation) {
+      showError('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    showLoading();
+
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const { latitude, longitude } = position.coords;
+      try {
+        await fetchAndDisplayWeather(latitude, longitude, 'Current Location', '', '');
+      } catch (err) {
+        showError('Could not fetch weather for your location.');
+      }
+    }, (error) => {
+      let msg = 'Unable to get your location.';
+      if (error.code === error.PERMISSION_DENIED) msg = 'Location permission denied.';
+      showError(msg);
+    });
+  }
+
+  async function fetchAndDisplayWeather(lat, lon, cityName, region, country) {
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (!data.current) throw new Error('No weather data available');
+
+      const current = data.current;
+      const info = getWeatherInfo(current.weather_code);
+
+      // Populate UI
+      document.getElementById('city-name').textContent = cityName;
+      const detailsEl = document.getElementById('city-details');
+      detailsEl.textContent = region && country ? `${region}, ${country}` : (region || country || `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`);
+
+      document.getElementById('temperature').textContent = Math.round(current.temperature_2m);
+      document.getElementById('condition').textContent = info.desc;
+      document.getElementById('weather-icon').textContent = info.icon;
+
+      document.getElementById('feels-like').textContent = Math.round(current.apparent_temperature) + '°';
+      document.getElementById('humidity').textContent = current.relative_humidity_2m + '%';
+      document.getElementById('wind').textContent = Math.round(current.wind_speed_10m) + ' km/h';
+
+      // time
+      const updated = new Date(current.time);
+      document.getElementById('updated-time').textContent = 'Updated ' + updated.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+      // show
+      document.getElementById('empty-state').classList.add('hidden');
+      document.getElementById('error-state').classList.add('hidden');
+      document.getElementById('weather-container').classList.remove('hidden');
+    } catch (err) {
+      showError('Failed to load weather data. Please try again.');
+    }
+  }
+
+  function quickSearch(city) {
+    document.getElementById('city-input').value = city;
+    getWeatherByCity();
+  }
+
+  // Init
+  function init() {
+    initTailwind();
+    // Optional: preload a default city on first visit (comment out if not wanted)
+    // setTimeout(() => { document.getElementById('city-input').value = 'Copenhagen'; getWeatherByCity(); }, 600);
+
+    // Show empty state initially
+    document.getElementById('empty-state').classList.remove('hidden');
+  }
+
+  window.onload = init;
+</script>
+</body>
+</html>
