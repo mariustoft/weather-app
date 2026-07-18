@@ -1,8 +1,8 @@
 // js/ui.js
-// UI Module - Robust premium rendering
+// UI Module - Premium rendering with live aircraft support
 
 import { getWeatherInfo } from './weather.js';
-import { openFlightradar } from './aircraft.js';
+import { openFlightradar, fetchNearbyAircraft, getAircraftData } from './aircraft.js';
 
 export function showLoading() {
   const container = document.getElementById('weather-container');
@@ -31,13 +31,77 @@ export function showError(msg) {
   errorEl.classList.remove('hidden');
 }
 
-export function renderWeather(data, cityName, region, country, lat, lon) {
+export async function renderWeather(data, cityName, region, country, lat, lon) {
   const container = document.getElementById('weather-container');
   const info = getWeatherInfo(data.weather_code);
 
   const locationText = region && country 
     ? `${region}, ${country}` 
     : `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
+
+  // Try to fetch aircraft
+  let aircraftHTML = '';
+  try {
+    const planes = await fetchNearbyAircraft(lat, lon);
+
+    if (planes.length > 0) {
+      const planeItems = planes.map(p => {
+        const alt = p.altitude ? `${p.altitude} m` : '—';
+        const spd = p.speed ? `${p.speed} km/h` : '—';
+        const status = p.onGround ? 'On ground' : 'Airborne';
+        return `
+          <div class="flex justify-between items-center py-2 border-b border-zinc-700 last:border-b-0 text-sm">
+            <div class="font-mono text-blue-400">${p.callsign}</div>
+            <div class="text-right text-xs text-zinc-400">
+              ${alt} • ${spd}<br>
+              <span class="text-[10px]">${status}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      aircraftHTML = `
+        <div class="pt-6 border-t border-zinc-700 mt-6">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-x-2">
+              <i class="fa-solid fa-plane text-blue-400"></i>
+              <span class="font-semibold text-white">${planes.length} aircraft nearby</span>
+            </div>
+            <button onclick="window.open('https://www.flightradar24.com/${lat.toFixed(4)},${lon.toFixed(4)}/8', '_blank')" 
+                    class="text-xs px-3 py-1 bg-zinc-800 hover:bg-zinc-700 rounded-full text-zinc-400 transition-colors">
+              View on map
+            </button>
+          </div>
+          <div class="max-h-[160px] overflow-auto pr-1 text-sm">
+            ${planeItems}
+          </div>
+        </div>
+      `;
+    } else {
+      aircraftHTML = `
+        <div class="pt-6 border-t border-zinc-700 mt-6">
+          <div class="flex items-center gap-x-2 mb-3">
+            <i class="fa-solid fa-plane text-blue-400"></i>
+            <span class="font-semibold text-white">Aircraft nearby</span>
+          </div>
+          <p class="text-sm text-zinc-400 mb-3">No aircraft detected in this area right now.</p>
+          <button onclick="window.open('https://www.flightradar24.com/${lat.toFixed(4)},${lon.toFixed(4)}/8', '_blank')" 
+                  class="w-full py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-3xl text-sm font-medium transition-colors">
+            Open Flightradar24
+          </button>
+        </div>
+      `;
+    }
+  } catch (e) {
+    aircraftHTML = `
+      <div class="pt-6 border-t border-zinc-700 mt-6">
+        <button onclick="window.open('https://www.flightradar24.com/${lat.toFixed(4)},${lon.toFixed(4)}/8', '_blank')" 
+                class="w-full py-3 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-3xl text-sm font-medium transition-colors">
+          View live aircraft on Flightradar24
+        </button>
+      </div>
+    `;
+  }
 
   container.innerHTML = `
     <div class="weather-card p-8">
@@ -76,34 +140,9 @@ export function renderWeather(data, cityName, region, country, lat, lon) {
         </div>
       </div>
 
-      <!-- Aircraft -->
-      <div class="pt-6 border-t border-zinc-700">
-        <div class="flex items-center gap-x-3 mb-4">
-          <div class="w-9 h-9 bg-blue-500/10 rounded-2xl flex items-center justify-center">
-            <i class="fa-solid fa-plane text-blue-400"></i>
-          </div>
-          <div>
-            <div class="font-semibold">Aircraft nearby</div>
-            <div class="text-xs text-zinc-500">Live air traffic & airport activity</div>
-          </div>
-        </div>
-
-        <button id="flightradar-btn" 
-                class="w-full py-4 bg-zinc-900 hover:bg-zinc-800 active:bg-black border border-zinc-700 rounded-3xl flex items-center justify-center gap-x-3 text-sm font-medium transition-all">
-          <i class="fa-solid fa-plane-departure text-blue-400"></i>
-          <span>View live aircraft on Flightradar24</span>
-        </button>
-      </div>
+      ${aircraftHTML}
     </div>
   `;
-
-  // Attach Flightradar button safely
-  setTimeout(() => {
-    const btn = document.getElementById('flightradar-btn');
-    if (btn) {
-      btn.onclick = openFlightradar;
-    }
-  }, 30);
 
   hideAllStates();
 }
