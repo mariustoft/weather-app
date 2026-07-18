@@ -1,0 +1,20 @@
+/* styles/main.css */
+/* Custom styles on top of Tailwind */
+
+.weather-card {
+  background: linear-gradient(145deg, #18181b, #27251f);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+  border: 1px solid #3f3f46;
+}
+
+.metric-card {
+  background-color: #27251f;
+  border: 1px solid #3f3f46;
+}
+
+.temp {
+  font-size: 4.5rem;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
