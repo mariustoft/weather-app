@@ -2,11 +2,11 @@
 // Main entry point - wires everything together
 
 import { getCityCoordinates, getCurrentWeather } from './weather.js';
-import { setCurrentLocation, openFlightradar } from './aircraft.js';
-import { showLoading, hideStates, showError, renderWeather } from './ui.js';
+import { setCurrentLocation } from './aircraft.js';
+import { showLoading, showError, renderWeather, hideAllStates } from './ui.js';
 
 function initTailwind() {
-  // Tailwind is loaded via CDN
+  // Tailwind via CDN
 }
 
 async function handleCitySearch(city) {
@@ -18,16 +18,14 @@ async function handleCitySearch(city) {
 
     setCurrentLocation(place.latitude, place.longitude);
     renderWeather(weather, place.name, place.admin1, place.country, place.latitude, place.longitude);
-
-    hideStates();
   } catch (err) {
-    showError(err.message || 'Failed to fetch weather');
+    showError(err.message || 'Failed to fetch weather. Please try again.');
   }
 }
 
 async function handleGeolocation() {
   if (!navigator.geolocation) {
-    showError('Geolocation is not supported');
+    showError('Geolocation is not supported by your browser.');
     return;
   }
 
@@ -40,40 +38,41 @@ async function handleGeolocation() {
       const weather = await getCurrentWeather(latitude, longitude);
       setCurrentLocation(latitude, longitude);
       renderWeather(weather, 'Current Location', '', '', latitude, longitude);
-      hideStates();
     } catch (err) {
-      showError('Could not fetch weather for your location');
+      showError('Could not fetch weather for your current location.');
     }
   }, () => {
-    showError('Location permission denied');
+    showError('Location permission denied. Please allow location access.');
   });
 }
 
 function setupEventListeners() {
-  // Search button
   const searchBtn = document.getElementById('search-btn');
   const cityInput = document.getElementById('city-input');
 
-  searchBtn.addEventListener('click', () => {
-    const city = cityInput.value.trim();
-    if (city) handleCitySearch(city);
-  });
-
-  cityInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
+  if (searchBtn && cityInput) {
+    searchBtn.addEventListener('click', () => {
       const city = cityInput.value.trim();
       if (city) handleCitySearch(city);
-    }
-  });
+    });
 
-  // Geolocation button
-  document.getElementById('location-btn').addEventListener('click', handleGeolocation);
+    cityInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        const city = cityInput.value.trim();
+        if (city) handleCitySearch(city);
+      }
+    });
+  }
 
-  // Quick city buttons
+  const locationBtn = document.getElementById('location-btn');
+  if (locationBtn) {
+    locationBtn.addEventListener('click', handleGeolocation);
+  }
+
   document.querySelectorAll('.quick-city').forEach(btn => {
     btn.addEventListener('click', () => {
       const city = btn.dataset.city;
-      cityInput.value = city;
+      if (cityInput) cityInput.value = city;
       handleCitySearch(city);
     });
   });
@@ -83,14 +82,14 @@ function init() {
   initTailwind();
   setupEventListeners();
 
-  // Auto load Copenhagen on first visit
+  // Auto-demo with Copenhagen
   setTimeout(() => {
     const input = document.getElementById('city-input');
     if (input && !input.value) {
       input.value = 'Copenhagen';
       handleCitySearch('Copenhagen');
     }
-  }, 600);
+  }, 800);
 }
 
 window.onload = init;
