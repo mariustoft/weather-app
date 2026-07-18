@@ -1,41 +1,74 @@
 # Weatherly
 
-A **very basic** weather app built with plain HTML + Tailwind + vanilla JS.
-
-## Live Demo
-
-**https://weatherly-ten-alpha.vercel.app**  ← this one works publicly
-
-(The other Vercel URLs for the project may redirect to a login page right now because "Vercel Authentication" is enabled in project security settings.)
+A clean, modern weather application built with good architecture and separation of concerns.
 
 ## Features
-- Search weather by city name
-- Use current browser location
-- Clean modern UI
-- No API keys required
 
-## Data
-Powered by the free [Open-Meteo](https://open-meteo.com) API (geocoding + forecast).
+- Search weather by city
+- Use current location
+- Quick access to popular cities
+- Live aircraft nearby using Flightradar24
+- Beautiful dark modern UI
+- Fully responsive
 
-## Run locally
-Open `index.html` in any browser.
+## Tech Stack
 
-## Deployed on Vercel + GitHub
+- Vanilla JavaScript (ES Modules)
+- Tailwind CSS (via CDN for simplicity)
+- Open-Meteo API
+- Flightradar24 integration
 
-- Vercel project: **weatherly**
-- GitHub repo connected → pushes to `main` auto-deploy and update the alias
-- Clean static deploy (no vercel.json needed)
+## Project Structure
 
-### Source
-https://github.com/mariustoft/weather-app
+```
+weather-app/
+├── index.html          # Main HTML entry point
+├── README.md
+├── js/
+│   ├── main.js           # App bootstrap & event listeners
+│   ├── weather.js        # Weather service (API + formatting)
+│   ├── aircraft.js       # Aircraft logic + Flightradar link
+│   └── ui.js             # DOM rendering & UI helpers
+├── styles/
+│   └── main.css          # Custom styles
+└── .gitignore
+```
 
-### Re-deploy / fork
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?repository-url=https%3A%2F%2Fgithub.com%2Fmariustoft%2Fweather-app)
+## Architecture
 
-## Tech stack
-- Single file `index.html`
-- Tailwind via CDN
-- Font Awesome
-- Open-Meteo APIs
+The app is split into small, focused modules:
 
-Created for demo of GitHub + Vercel automation.
+- **`weather.js`** — Handles all weather-related logic (geocoding + current conditions)
+- **`aircraft.js`** — Handles aircraft data and Flightradar24 integration
+- **`ui.js`** — Responsible for updating the DOM
+- **`main.js`** — Wires everything together
+
+This makes the code much easier to maintain and extend.
+
+## Getting Started
+
+```bash
+# Clone the repo
+git clone https://github.com/mariustoft/weather-app.git
+cd weather-app
+
+# Open in browser (or use Live Server extension)
+open index.html
+```
+
+## Deployment
+
+This project is deployed on **Vercel** and automatically deploys on every push to `main`.
+
+Live URL: https://weatherly-ten-alpha.vercel.app
+
+## Future Roadmap
+
+- [ ] Migrate to Next.js + TypeScript
+- [ ] Add 7-day forecast
+- [ ] Add favorite cities (localStorage)
+- [ ] Add proper build setup (Tailwind + PostCSS)
+
+## License
+
+MIT
