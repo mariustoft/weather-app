@@ -1,5 +1,5 @@
 /* ==========================================
-   Weatherly - Custom CSS + Animations
+   Weatherly - Custom CSS + Hero Image
    ========================================== */
 
 :root {
@@ -24,27 +24,45 @@ body {
   line-height: 1.6;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Hero with Image */
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+@media (min-width: 640px) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 }
 
-.fade-in {
-  animation: fadeIn 0.4s ease-out forwards;
+.hero-content h1 {
+  font-size: 48px;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -2.2px;
+  margin-bottom: 12px;
 }
 
-.loading-spinner {
-  width: 42px;
-  height: 42px;
-  border: 4px solid rgba(59, 130, 246, 0.2);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+.hero-subtitle {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 320px;
+}
+
+.plane-hero {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
 }
 
 /* Navigation */
@@ -100,25 +118,6 @@ body {
   border-radius: 50%;
 }
 
-/* Container */
-.container {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 32px 24px 80px;
-}
-
-/* Hero */
-.hero {
-  margin-bottom: 32px;
-}
-
-.hero h1 {
-  font-size: 48px;
-  line-height: 1.05;
-  font-weight: 700;
-  letter-spacing: -2.2px;
-}
-
 /* Search */
 .search-section {
   margin-bottom: 28px;
@@ -138,7 +137,6 @@ body {
   padding: 15px 20px;
   border-radius: 999px;
   outline: none;
-  transition: border-color 0.2s;
 }
 
 .search-bar input:focus {
@@ -209,7 +207,6 @@ body {
   border-radius: 20px;
   padding: 26px;
   box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  animation: fadeIn 0.4s ease-out;
 }
 
 /* Metrics */
@@ -232,11 +229,6 @@ body {
   border-radius: 14px;
   padding: 14px;
   text-align: center;
-  transition: transform 0.2s ease;
-}
-
-.metric:hover {
-  transform: translateY(-2px);
 }
 
 .metric-label {
@@ -252,19 +244,11 @@ body {
   line-height: 1.1;
 }
 
-/* Aircraft Section */
-.aircraft-section {
-  margin-top: 20px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
-}
-
 /* Empty & Error States */
 .empty-state, .error-state {
   text-align: center;
   padding: 50px 20px;
   color: var(--text-muted);
-  animation: fadeIn 0.4s ease-out;
 }
 
 .empty-state i, .error-state i {
