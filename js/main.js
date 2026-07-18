@@ -1,11 +1,13 @@
 // js/main.js
-// Main entry point
+// Main entry point - improved and cleaner
 
 import { getCityCoordinates, getCurrentWeather } from './weather.js';
-import { setCurrentLocation } from './aircraft.js';
+import { setCurrentLocation, fetchNearbyAircraft } from './aircraft.js';
 import { showLoading, showError, renderWeather, hideAllStates } from './ui.js';
+import { setState, setLoading, setError, setWeather } from './state.js';
 
 async function handleCitySearch(city) {
+  setLoading(true);
   showLoading();
 
   try {
@@ -13,8 +15,11 @@ async function handleCitySearch(city) {
     const weather = await getCurrentWeather(place.latitude, place.longitude);
 
     setCurrentLocation(place.latitude, place.longitude);
+    setWeather(weather, { lat: place.latitude, lon: place.longitude, name: place.name });
+
     await renderWeather(weather, place.name, place.admin1, place.country, place.latitude, place.longitude);
   } catch (err) {
+    setError(err.message);
     showError(err.message || 'Failed to fetch weather. Please try again.');
   }
 }
@@ -25,6 +30,7 @@ async function handleGeolocation() {
     return;
   }
 
+  setLoading(true);
   showLoading();
 
   navigator.geolocation.getCurrentPosition(async (position) => {
@@ -33,11 +39,15 @@ async function handleGeolocation() {
     try {
       const weather = await getCurrentWeather(latitude, longitude);
       setCurrentLocation(latitude, longitude);
+      setWeather(weather, { lat: latitude, lon: longitude, name: 'Current Location' });
+
       await renderWeather(weather, 'Current Location', '', '', latitude, longitude);
     } catch (err) {
+      setError(err.message);
       showError('Could not fetch weather for your current location.');
     }
   }, () => {
+    setError('Location permission denied');
     showError('Location permission denied. Please allow location access.');
   });
 }
@@ -77,7 +87,7 @@ function setupEventListeners() {
 function init() {
   setupEventListeners();
 
-  // Auto load Copenhagen
+  // Auto load Copenhagen on first visit
   setTimeout(() => {
     const input = document.getElementById('city-input');
     if (input && !input.value) {
