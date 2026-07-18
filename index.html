@@ -7,12 +7,13 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
     body { font-family: 'Inter', system_ui, sans-serif; }
     .title-font { font-family: 'Space Grotesk', 'Inter', sans-serif; }
     .weather-card {
-      background: linear-gradient(145deg, #f8fafc, #ffffff);
-      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+      background: linear-gradient(145deg, #18181b, #27251f);
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3), 0 4px 6px -4px rgb(0 0 0 / 0.3);
+      border: 1px solid #3f3f46;
     }
     .temp {
       font-size: 4.5rem;
@@ -20,9 +21,13 @@
       font-weight: 600;
       letter-spacing: -0.05em;
     }
+    .metric-card {
+      background-color: #27251f;
+      border: 1px solid #3f3f46;
+    }
   </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="bg-zinc-950 text-zinc-100 min-h-screen">
   <div class="max-w-lg mx-auto px-4 py-8">
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
@@ -31,11 +36,11 @@
           <i class="fa-solid fa-cloud-sun text-3xl"></i>
         </div>
         <div>
-          <h1 class="title-font text-3xl font-semibold tracking-tighter text-slate-900">Weatherly</h1>
-          <p class="text-xs text-slate-500 -mt-1">Basic Edition</p>
+          <h1 class="title-font text-3xl font-semibold tracking-tighter text-white">Weatherly</h1>
+          <p class="text-xs text-zinc-500 -mt-1">Basic Edition • Dark</p>
         </div>
       </div>
-      <div class="text-xs px-3 py-1 bg-white rounded-full border text-slate-500 flex items-center gap-x-1">
+      <div class="text-xs px-3 py-1 bg-zinc-900 border border-zinc-700 rounded-full text-zinc-400 flex items-center gap-x-1">
         <i class="fa-solid fa-globe fa-xs"></i>
         <span>Open-Meteo</span>
       </div>
@@ -48,11 +53,11 @@
           <input 
             id="city-input" 
             type="text" 
-            placeholder="Enter city name (e.g. London, Paris)"
-            class="w-full px-4 py-3 rounded-2xl border border-slate-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 outline-none text-slate-800 placeholder:text-slate-400"
+            placeholder="Enter city name (e.g. Copenhagen, London)"
+            class="w-full px-4 py-3 rounded-2xl border border-zinc-700 bg-zinc-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500/30 outline-none text-white placeholder:text-zinc-500"
             onkeypress="if (event.key === 'Enter') getWeatherByCity()"
           >
-          <i class="fa-solid fa-search absolute right-4 top-4 text-slate-400"></i>
+          <i class="fa-solid fa-search absolute right-4 top-4 text-zinc-500"></i>
         </div>
         <button 
           onclick="getWeatherByCity()"
@@ -64,17 +69,17 @@
       
       <!-- Quick cities -->
       <div class="flex flex-wrap gap-2 mt-3">
-        <button onclick="quickSearch('Copenhagen')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">Copenhagen</button>
-        <button onclick="quickSearch('London')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">London</button>
-        <button onclick="quickSearch('New York')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">New York</button>
-        <button onclick="quickSearch('Tokyo')" class="text-xs px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-full text-slate-600 transition-colors">Tokyo</button>
+        <button onclick="quickSearch('Copenhagen')" class="text-xs px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full text-zinc-300 transition-colors">Copenhagen</button>
+        <button onclick="quickSearch('London')" class="text-xs px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full text-zinc-300 transition-colors">London</button>
+        <button onclick="quickSearch('New York')" class="text-xs px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full text-zinc-300 transition-colors">New York</button>
+        <button onclick="quickSearch('Tokyo')" class="text-xs px-3 py-1.5 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-full text-zinc-300 transition-colors">Tokyo</button>
       </div>
     </div>
 
     <!-- Location button -->
     <button 
       onclick="getWeatherByLocation()"
-      class="w-full mb-6 flex items-center justify-center gap-x-2 py-3 text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 active:bg-blue-200 rounded-2xl transition-colors">
+      class="w-full mb-6 flex items-center justify-center gap-x-2 py-3 text-sm font-medium text-blue-400 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 active:bg-zinc-950 rounded-2xl transition-colors">
       <i class="fa-solid fa-location-arrow"></i>
       <span>Use my current location</span>
     </button>
@@ -84,14 +89,14 @@
 
     <!-- Empty state -->
     <div id="empty-state" class="text-center py-8 px-4">
-      <div class="mx-auto w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4">
-        <i class="fa-solid fa-cloud text-3xl text-slate-300"></i>
+      <div class="mx-auto w-16 h-16 bg-zinc-900 border border-zinc-800 rounded-full flex items-center justify-center mb-4">
+        <i class="fa-solid fa-cloud text-3xl text-zinc-700"></i>
       </div>
-      <p class="text-slate-500 text-sm">Enter a city or use your location<br>to see the current weather.</p>
+      <p class="text-zinc-400 text-sm">Enter a city or use your location<br>to see the current weather.</p>
     </div>
 
     <!-- Error -->
-    <div id="error-state" class="hidden bg-red-50 border border-red-100 text-red-600 rounded-2xl p-4 text-sm">
+    <div id="error-state" class="hidden bg-red-950 border border-red-900 text-red-400 rounded-2xl p-4 text-sm">
       <div class="flex gap-2">
         <i class="fa-solid fa-exclamation-circle mt-0.5"></i>
         <div>
@@ -101,13 +106,13 @@
     </div>
   </div>
 
-  <footer class="text-center py-6 text-xs text-slate-400">
-    Very basic weather app • Data from <a href="https://open-meteo.com" target="_blank" class="underline hover:text-slate-500">Open-Meteo</a> • Deployed on Vercel
+  <footer class="text-center py-6 text-xs text-zinc-500">
+    Very basic weather app • Data from <a href="https://open-meteo.com" target="_blank" class="underline hover:text-zinc-400">Open-Meteo</a> • Dark theme • Deployed on Vercel
   </footer>
 
 <script>
   function initTailwind() {
-    document.documentElement.style.setProperty('--accent', '#2563eb');
+    document.documentElement.style.setProperty('--accent', '#3b82f6');
   }
 
   function getWeatherInfo(code) {
@@ -142,34 +147,34 @@
 
   function setResultSkeleton() {
     document.getElementById('weather-container').innerHTML = `
-      <div class="weather-card border border-slate-100 rounded-3xl p-6">
+      <div class="weather-card rounded-3xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
-            <div id="city-details" class="text-sm text-slate-500"></div>
+            <div id="city-name" class="text-2xl font-semibold text-white"></div>
+            <div id="city-details" class="text-sm text-zinc-400"></div>
           </div>
           <div id="weather-icon" class="text-5xl"></div>
         </div>
         <div class="flex items-baseline gap-x-1 mb-6">
-          <span id="temperature" class="temp text-slate-900"></span>
-          <span class="text-3xl text-slate-400">°C</span>
+          <span id="temperature" class="temp text-white"></span>
+          <span class="text-3xl text-zinc-500">°C</span>
         </div>
-        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
+        <div id="condition" class="text-lg font-medium text-zinc-200 mb-5"></div>
         <div class="grid grid-cols-3 gap-3">
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
-            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">FEELS LIKE</div>
+            <div id="feels-like" class="font-semibold text-xl text-white"></div>
           </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
-            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">HUMIDITY</div>
+            <div id="humidity" class="font-semibold text-xl text-white"></div>
           </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">WIND</div>
-            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">WIND</div>
+            <div id="wind" class="font-semibold text-xl text-white"></div>
           </div>
         </div>
-        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
+        <div class="mt-4 pt-4 border-t border-zinc-800 text-[10px] text-zinc-500 flex justify-between items-center">
           <div id="updated-time"></div>
           <div class="flex items-center gap-1">
             <i class="fa-solid fa-sync fa-xs"></i>
@@ -184,9 +189,9 @@
     hideStates();
     const container = document.getElementById('weather-container');
     container.innerHTML = `
-      <div class="weather-card border border-slate-100 rounded-3xl p-6 flex flex-col items-center justify-center h-[260px]">
+      <div class="weather-card rounded-3xl p-6 flex flex-col items-center justify-center h-[260px]">
         <i class="fa-solid fa-spinner fa-spin text-3xl text-blue-500"></i>
-        <p class="mt-3 text-sm text-slate-500">Fetching weather...</p>
+        <p class="mt-3 text-sm text-zinc-400">Fetching weather...</p>
       </div>
     `;
     container.classList.remove('hidden');
@@ -197,34 +202,34 @@
     document.getElementById('empty-state').classList.add('hidden');
     document.getElementById('error-state').classList.add('hidden');
     document.getElementById('weather-container').innerHTML = `
-      <div class="weather-card border border-slate-100 rounded-3xl p-6">
+      <div class="weather-card rounded-3xl p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <div id="city-name" class="text-2xl font-semibold text-slate-900"></div>
-            <div id="city-details" class="text-sm text-slate-500"></div>
+            <div id="city-name" class="text-2xl font-semibold text-white"></div>
+            <div id="city-details" class="text-sm text-zinc-400"></div>
           </div>
           <div id="weather-icon" class="text-5xl"></div>
         </div>
         <div class="flex items-baseline gap-x-1 mb-6">
-          <span id="temperature" class="temp text-slate-900"></span>
-          <span class="text-3xl text-slate-400">°C</span>
+          <span id="temperature" class="temp text-white"></span>
+          <span class="text-3xl text-zinc-500">°C</span>
         </div>
-        <div id="condition" class="text-lg font-medium text-slate-700 mb-5"></div>
+        <div id="condition" class="text-lg font-medium text-zinc-200 mb-5"></div>
         <div class="grid grid-cols-3 gap-3">
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">FEELS LIKE</div>
-            <div id="feels-like" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">FEELS LIKE</div>
+            <div id="feels-like" class="font-semibold text-xl text-white"></div>
           </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">HUMIDITY</div>
-            <div id="humidity" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">HUMIDITY</div>
+            <div id="humidity" class="font-semibold text-xl text-white"></div>
           </div>
-          <div class="bg-slate-50 rounded-2xl p-3 text-center">
-            <div class="text-xs text-slate-500 mb-1">WIND</div>
-            <div id="wind" class="font-semibold text-xl text-slate-800"></div>
+          <div class="metric-card rounded-2xl p-3 text-center">
+            <div class="text-xs text-zinc-500 mb-1">WIND</div>
+            <div id="wind" class="font-semibold text-xl text-white"></div>
           </div>
         </div>
-        <div class="mt-4 pt-4 border-t text-[10px] text-slate-400 flex justify-between items-center">
+        <div class="mt-4 pt-4 border-t border-zinc-800 text-[10px] text-zinc-500 flex justify-between items-center">
           <div id="updated-time"></div>
           <div class="flex items-center gap-1">
             <i class="fa-solid fa-sync fa-xs"></i>
