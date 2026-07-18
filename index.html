@@ -4,157 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Weatherly</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="styles/main.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&display=swap');
-    
-    :root {
-      --accent: #3b82f6;
-    }
-    
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-    }
-    
-    .title-font {
-      font-family: 'Space Grotesk', 'Inter', sans-serif;
-      font-weight: 600;
-      letter-spacing: -0.025em;
-    }
-
-    .glass {
-      background: rgba(255, 255, 255, 0.06);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .weather-card {
-      background: linear-gradient(145deg, #18181b, #27251f);
-      border: 1px solid #3f3f46;
-      box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-    }
-
-    .metric-card {
-      background: #27251f;
-      border: 1px solid #3f3f46;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .metric-card:hover {
-      transform: translateY(-2px);
-    }
-
-    .section-title {
-      font-size: 0.75rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      font-weight: 600;
-      color: #71717a;
-    }
-  </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100">
+<body>
   <!-- Top Navigation -->
-  <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-lg sticky top-0 z-50">
-    <div class="max-w-2xl mx-auto px-6 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-x-3">
-        <div class="w-9 h-9 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-inner">
-          <i class="fa-solid fa-cloud-sun text-white text-xl"></i>
-        </div>
-        <div>
-          <span class="title-font text-2xl font-semibold tracking-tighter">Weatherly</span>
-        </div>
+  <nav class="nav">
+    <div class="nav-content">
+      <div class="logo">
+        <i class="fa-solid fa-cloud-sun"></i>
+        <span>Weatherly</span>
       </div>
-      
-      <div class="flex items-center gap-x-2 text-xs">
-        <div class="px-3 py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-400 flex items-center gap-x-1.5">
-          <div class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></div>
-          <span>Live</span>
-        </div>
+      <div class="live-badge">
+        <span class="dot"></span>
+        <span>Live</span>
       </div>
     </div>
   </nav>
 
-  <div class="max-w-2xl mx-auto px-6 pt-10 pb-20">
-    
-    <!-- Hero / Header -->
-    <div class="mb-10">
-      <div class="flex items-end justify-between">
-        <div>
-          <h1 class="title-font text-6xl font-semibold tracking-tighter text-white">Weather,</h1>
-          <p class="text-5xl font-semibold tracking-tighter text-zinc-400 -mt-2">instantly.</p>
-        </div>
-        <div class="hidden sm:block text-right">
-          <div class="text-xs text-zinc-500">POWERED BY</div>
-          <div class="text-sm font-medium text-zinc-400">Open-Meteo</div>
-        </div>
-      </div>
+  <div class="container">
+    <!-- Hero -->
+    <div class="hero">
+      <h1>Weather,<br>instantly.</h1>
     </div>
 
-    <!-- Search Bar -->
-    <div class="mb-6">
-      <div class="flex gap-3">
-        <div class="flex-1 relative group">
-          <input 
-            id="city-input" 
-            type="text" 
-            placeholder="Search any city..." 
-            class="w-full bg-zinc-900 border border-zinc-800 focus:border-blue-500 transition-colors text-lg px-6 py-4 rounded-3xl outline-none placeholder:text-zinc-500">
-          <i class="fa-solid fa-search absolute right-6 top-4.5 text-zinc-500 group-focus-within:text-blue-400 transition-colors"></i>
-        </div>
-        <button id="search-btn"
-                class="px-8 py-4 bg-white text-zinc-900 hover:bg-zinc-100 active:bg-white font-semibold rounded-3xl transition-all flex items-center gap-x-2 shadow-sm">
-          <span>Search</span>
-        </button>
+    <!-- Search -->
+    <div class="search-section">
+      <div class="search-bar">
+        <input id="city-input" type="text" placeholder="Search any city...">
+        <button id="search-btn">Search</button>
       </div>
 
-      <!-- Quick Cities -->
-      <div class="flex flex-wrap gap-2 mt-4">
-        <button data-city="Copenhagen" class="quick-city px-4 py-1.5 text-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl transition-colors text-zinc-300">Copenhagen</button>
-        <button data-city="London" class="quick-city px-4 py-1.5 text-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl transition-colors text-zinc-300">London</button>
-        <button data-city="Paris" class="quick-city px-4 py-1.5 text-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl transition-colors text-zinc-300">Paris</button>
-        <button data-city="New York" class="quick-city px-4 py-1.5 text-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl transition-colors text-zinc-300">New York</button>
-        <button data-city="Tokyo" class="quick-city px-4 py-1.5 text-sm bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl transition-colors text-zinc-300">Tokyo</button>
+      <div class="quick-cities">
+        <button data-city="Copenhagen" class="quick-city">Copenhagen</button>
+        <button data-city="London" class="quick-city">London</button>
+        <button data-city="Paris" class="quick-city">Paris</button>
+        <button data-city="New York" class="quick-city">New York</button>
+        <button data-city="Tokyo" class="quick-city">Tokyo</button>
       </div>
     </div>
 
     <!-- Location Button -->
-    <button id="location-btn"
-            class="w-full mb-8 flex items-center justify-center gap-x-3 py-3.5 text-sm font-medium bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 active:bg-zinc-950 rounded-3xl transition-all text-blue-400">
+    <button id="location-btn" class="location-btn">
       <i class="fa-solid fa-location-arrow"></i>
-      <span class="font-semibold">Use my current location</span>
+      <span>Use my current location</span>
     </button>
 
     <!-- Weather Result -->
-    <div id="weather-container" class="hidden mb-6"></div>
+    <div id="weather-container" class="hidden"></div>
 
     <!-- Empty State -->
-    <div id="empty-state" class="text-center py-12">
-      <div class="mx-auto w-20 h-20 bg-zinc-900 rounded-3xl flex items-center justify-center mb-6 border border-zinc-800">
-        <i class="fa-solid fa-cloud text-4xl text-zinc-600"></i>
-      </div>
-      <h3 class="text-xl font-semibold mb-2">Ready when you are</h3>
-      <p class="text-zinc-400 max-w-xs mx-auto">Search for any city in the world or use your current location to get started.</p>
+    <div id="empty-state" class="empty-state">
+      <i class="fa-solid fa-cloud"></i>
+      <h3>Ready when you are</h3>
+      <p>Search for any city or use your current location.</p>
     </div>
 
     <!-- Error State -->
-    <div id="error-state" class="hidden bg-red-950/50 border border-red-900 rounded-3xl p-6 text-center">
-      <i class="fa-solid fa-exclamation-triangle text-red-400 text-2xl mb-3"></i>
-      <p id="error-message" class="text-red-300"></p>
+    <div id="error-state" class="error-state hidden">
+      <i class="fa-solid fa-exclamation-triangle"></i>
+      <p id="error-message"></p>
     </div>
-
   </div>
 
-  <footer class="border-t border-zinc-800 py-8 text-center text-xs text-zinc-500">
-    <div class="max-w-2xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-y-2">
-      <div>Weatherly • Built with care</div>
-      <div class="flex items-center gap-x-4">
-        <a href="https://open-meteo.com" target="_blank" class="hover:text-zinc-400 transition-colors">Open-Meteo</a>
-        <span class="text-zinc-700">•</span>
-        <a href="https://flightradar24.com" target="_blank" class="hover:text-zinc-400 transition-colors">Flightradar24</a>
-      </div>
+  <footer>
+    <div class="footer-content">
+      <span>Weatherly • Built with care</span>
+      <span>Open-Meteo • Flightradar24</span>
     </div>
   </footer>
 
