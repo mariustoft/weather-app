@@ -1,59 +1,278 @@
 /* ==========================================
-   Weatherly - Premium Dark UI Styles
+   Weatherly - Pure Custom CSS (No Tailwind)
    ========================================== */
 
-.weather-card {
-  background: linear-gradient(145deg, #18181b, #27251f);
-  border: 1px solid #3f3f46;
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.4);
-  border-radius: 2rem;
+:root {
+  --bg: #0f0f11;
+  --card-bg: #18181b;
+  --border: #3f3f46;
+  --text: #f4f4f5;
+  --text-muted: #a1a1aa;
+  --accent: #3b82f6;
 }
 
-.metric-card {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Navigation */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(15, 15, 17, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 100;
+}
+
+.nav-content {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.logo i {
+  color: var(--accent);
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
   background: #27251f;
-  border: 1px solid #3f3f46;
-  border-radius: 1.25rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
 }
 
-.metric-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
-  border-color: #52525b;
-}
-
-.glass {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Better input focus states */
-input:focus {
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
-}
-
-/* Subtle animations */
-.quick-city {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.quick-city:hover {
-  transform: translateY(-1px);
-  border-color: #52525b;
-}
-
-/* Loading skeleton improvement */
-.loading-skeleton {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+.live-badge .dot {
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
 }
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
+  50% { opacity: 0.4; }
 }
 
-/* Premium typography */
-.title-font {
-  font-feature-settings: "ss02";
+/* Container */
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* Hero */
+.hero h1 {
+  font-size: 52px;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -2.5px;
+  margin-bottom: 8px;
+}
+
+/* Search */
+.search-section {
+  margin-bottom: 24px;
+}
+
+.search-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.search-bar input {
+  flex: 1;
+  background: #27251f;
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 17px;
+  padding: 16px 20px;
+  border-radius: 999px;
+  outline: none;
+}
+
+.search-bar input:focus {
+  border-color: var(--accent);
+}
+
+.search-bar button {
+  background: white;
+  color: #111;
+  border: none;
+  padding: 0 28px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.search-bar button:hover {
+  background: #f1f1f1;
+}
+
+.quick-cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-city {
+  background: #27251f;
+  border: 1px solid var(--border);
+  color: #d4d4d8;
+  padding: 8px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-city:hover {
+  background: #323238;
+  border-color: #52525b;
+}
+
+/* Location Button */
+.location-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #27251f;
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 14px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 32px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.location-btn:hover {
+  background: #323238;
+}
+
+/* Weather Card */
+.weather-card {
+  background: linear-gradient(145deg, #18181b, #27251f);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  margin-bottom: 24px;
+}
+
+/* Metrics */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.metric {
+  background: #27251f;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+  letter-spacing: 0.5px;
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Aircraft */
+.aircraft-section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.aircraft-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* States */
+.empty-state, .error-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+
+.empty-state i, .error-state i {
+  font-size: 42px;
+  margin-bottom: 16px;
+  display: block;
+  color: #52525b;
+}
+
+/* Footer */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.footer-content {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+@media (min-width: 640px) {
+  .footer-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
