@@ -175,7 +175,7 @@
           </div>
         </div>
 
-        <!-- Planes / Aircraft section (fixed & improved) -->
+        <!-- Planes / Aircraft section -->
         <div class="mt-6 pt-5 border-t border-zinc-800">
           <div class="flex items-center gap-x-2 mb-3">
             <i class="fa-solid fa-plane text-blue-400 text-lg"></i>
@@ -283,6 +283,10 @@
   }
 
   async function fetchAndDisplayWeather(lat, lon, cityName, region, country) {
+    // Always update globals so the planes button works reliably
+    currentLat = lat;
+    currentLon = lon;
+
     try {
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&temperature_unit=celsius&wind_speed_unit=kmh`;
       const res = await fetch(url);
@@ -321,10 +325,10 @@
 
   function openFlightradar() {
     if (currentLat && currentLon) {
-      // Flightradar24 map centered on location with zoom level
-      const url = `https://www.flightradar24.com/${currentLat.toFixed(2)},${currentLon.toFixed(2)}/8`;
+      const url = `https://www.flightradar24.com/${currentLat.toFixed(4)},${currentLon.toFixed(4)}/8`;
       window.open(url, '_blank');
     } else {
+      // Fallback
       window.open('https://www.flightradar24.com', '_blank');
     }
   }
@@ -344,7 +348,7 @@
         input.value = 'Copenhagen';
         getWeatherByCity();
       }
-    }, 400);
+    }, 500);
 
     document.getElementById('empty-state').classList.remove('hidden');
   }
