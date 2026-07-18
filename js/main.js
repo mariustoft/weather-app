@@ -1,13 +1,9 @@
 // js/main.js
-// Main entry point - wires everything together
+// Main entry point
 
 import { getCityCoordinates, getCurrentWeather } from './weather.js';
 import { setCurrentLocation } from './aircraft.js';
 import { showLoading, showError, renderWeather, hideAllStates } from './ui.js';
-
-function initTailwind() {
-  // Tailwind via CDN
-}
 
 async function handleCitySearch(city) {
   showLoading();
@@ -17,7 +13,7 @@ async function handleCitySearch(city) {
     const weather = await getCurrentWeather(place.latitude, place.longitude);
 
     setCurrentLocation(place.latitude, place.longitude);
-    renderWeather(weather, place.name, place.admin1, place.country, place.latitude, place.longitude);
+    await renderWeather(weather, place.name, place.admin1, place.country, place.latitude, place.longitude);
   } catch (err) {
     showError(err.message || 'Failed to fetch weather. Please try again.');
   }
@@ -37,7 +33,7 @@ async function handleGeolocation() {
     try {
       const weather = await getCurrentWeather(latitude, longitude);
       setCurrentLocation(latitude, longitude);
-      renderWeather(weather, 'Current Location', '', '', latitude, longitude);
+      await renderWeather(weather, 'Current Location', '', '', latitude, longitude);
     } catch (err) {
       showError('Could not fetch weather for your current location.');
     }
@@ -79,10 +75,9 @@ function setupEventListeners() {
 }
 
 function init() {
-  initTailwind();
   setupEventListeners();
 
-  // Auto-demo with Copenhagen
+  // Auto load Copenhagen
   setTimeout(() => {
     const input = document.getElementById('city-input');
     if (input && !input.value) {
